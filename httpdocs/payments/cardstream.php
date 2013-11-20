@@ -95,7 +95,9 @@ if ($_POST['responseCode']) {
             'customerAddress' => $VPBillingStreet,
             'customerPostCode' => $VPBillingPostCode,
             'customerEmail' => $VPBillingEmail,
-            'customerPhone' => $VPBillingPhoneNumber);
+            'customerPhone' => $VPBillingPhoneNumber,
+            'merchantData' => 'cs-cart-hosted-1'
+        );
 
         ksort($sign);
         $sig_fields = http_build_query($sign) . $processor_data["params"]['passphrase'];
@@ -117,6 +119,8 @@ if ($_POST['responseCode']) {
 	    <input type="hidden" name="customerPostCode" value="{$VPBillingPostCode}" />
 	    <input type="hidden" name="customerEmail" value="{$VPBillingEmail}" />
 	    <input type="hidden" name="customerPhone" value="{$VPBillingPhoneNumber}" />
+	    <input type="hidden" name="merchantData" value="cs-cart-hosted-1" />
+	</form>
 	<p>
 	<div align=center>{$msg}</div>
 	</p>
