@@ -4,7 +4,7 @@ if (!defined('AREA')) {
     die('Access denied');
 }
 
-if ($_POST['responseCode']) {
+if (isset($_POST['responseCode']) && $_POST['responseCode'] != "") {
 
     // Get the password
     $payment_id = db_get_field("SELECT payment_id FROM ?:orders WHERE order_id = ?i", mysql_real_escape_string($_GET['order_id']));
@@ -14,19 +14,8 @@ if ($_POST['responseCode']) {
 
 
     if (($_POST['responseCode'] == 0) && ($order_info)) {
-        if (isset($_POST['signature'])) {
-            $sign = $_POST;
-            unset($sign['signature']);
-            ksort($sign);
-            $sig_fields = http_build_query($sign) . $processor_data["params"]['passphrase'];
-            $signature = hash('SHA512', $sig_fields);
-        }
 
-        if (isset($signature) && $signature !== $_POST['signature']) {
-            $pp_response['order_status'] = 'F';
-            $pp_response["reason_text"] = "Signature not matched on CardStream payment response.";
-
-        } elseif ($_POST['amountReceived'] == str_replace(".", "", $order_info['total'])) {
+        if ($_POST['amountReceived'] == str_replace(".", "", $order_info['total'])) {
             $pp_response['order_status'] = "P";
             $pp_response["reason_text"] = $_POST['responseMessage'];
             $pp_response["transaction_id"] = $_POST['xref'];
@@ -46,7 +35,7 @@ if ($_POST['responseCode']) {
 
 } else {
     $orderid = (($order_info['repaid']) ? ($order_id . '_' . $order_info['repaid']) : $order_id) . '-' . fn_date_format(time(), '%H_%M_%S');
-    $return = Registry::get('config.http_location') . "/clean.php?dispatch=payment_notification.notify&payment=cardstream&order_id=$order_id";
+    $return = Registry::get('config.http_location') . "/$index_script?dispatch=payment_notification.notify&payment=cardstream&order_id=$order_id";
 
     $VPBillingPhoneNumber = $order_info['phone'];
     $VPBillingEmail = $order_info['email'];
@@ -96,7 +85,7 @@ if ($_POST['responseCode']) {
             'customerPostCode' => $VPBillingPostCode,
             'customerEmail' => $VPBillingEmail,
             'customerPhone' => $VPBillingPhoneNumber,
-            'merchantData' => 'cs-cart-hosted-1'
+            'merchantData' => 'cs-cart-hosted-3'
         );
 
         ksort($sign);
@@ -119,7 +108,7 @@ if ($_POST['responseCode']) {
 	    <input type="hidden" name="customerPostCode" value="{$VPBillingPostCode}" />
 	    <input type="hidden" name="customerEmail" value="{$VPBillingEmail}" />
 	    <input type="hidden" name="customerPhone" value="{$VPBillingPhoneNumber}" />
-	    <input type="hidden" name="merchantData" value="cs-cart-hosted-1" />
+	    <input type="hidden" name="merchantData" value="cs-cart-hosted-3" />
 	</form>
 	<p>
 	<div align=center>{$msg}</div>

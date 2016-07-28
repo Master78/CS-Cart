@@ -1,0 +1,1 @@
+INSERT INTO `cscart_payment_processors` (`processor`, `processor_script`, `processor_template`, `admin_template`, `callback`, `type`) VALUES ('Cardstream', 'cardstream.php', 'cc_outside.tpl', 'cardstream.tpl', 'N', 'P');
